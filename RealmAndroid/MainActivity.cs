@@ -53,14 +53,14 @@ namespace RealmAndroid
 				using (var transaction = realm.BeginWrite())
 				{
 					Person person;
-					for (int i = 0; i < 50; i++)
+					for (int i = 0; i < 150; i++)
 					{
 						person = realm.CreateObject<Person>();
 						person.UUID = Guid.NewGuid().ToString();
 						person.Name = String.Format("{0}_{1}", "PersonName", i);
 
 						Dog dog;
-						for (int j = 0; j < rand.Next(1, 6); j++)
+						for (int j = 0; j < rand.Next(1, 10); j++)
 						{
 							dog = realm.CreateObject<Dog>();
 							dog.UUID = Guid.NewGuid().ToString();
@@ -76,7 +76,7 @@ namespace RealmAndroid
 
 				// search data
 				start = DateTime.Now;
-				var serchedPersons = realm.All<Person>().Where(p => p.Name == "PersonName_31");
+				var serchedPersons = realm.All<Person>().Where(p => p.Name == "PersonName_87");
 				end = DateTime.Now;
 				SDDebug.WriteLine($"Search time (ms): {(end - start).TotalMilliseconds}");
 				SDDebug.WriteLine($"Persons count: {serchedPersons.Count()}");
@@ -101,38 +101,49 @@ namespace RealmAndroid
 				}
 
 				// upload infos
-				//var client = new RestClient(@"http://demo-project-pafik13.c9users.io:8080/");
-				var client = new RestClient(@"http://realm-logisapp.rhcloud.com/");
+				var client = new RestClient(@"http://demo-project-pafik13.c9users.io:8080/");
+				//var client = new RestClient(@"http://realm-logisapp.rhcloud.com/");
 
 				start = DateTime.Now;
-				IRestRequest requestPerson = new RestRequest(@"Person", Method.POST);
-				var qPersons = realm.All<Person>();
-				foreach (var itemP in qPersons)
-				{
-					requestPerson.Parameters.Clear();
-					requestPerson.AddJsonBody(itemP);
-					var responsePerson = client.Execute(requestPerson);
-					if (responsePerson.StatusCode != HttpStatusCode.Created) {
-						SDDebug.WriteLine($"Insert Person UNsuccess. Error:{(responsePerson.Content)}");
-					}
+				IRestRequest reqUploadRealmFile = new RestRequest(@"RealmFIle/Upload", Method.POST);
+				reqUploadRealmFile.Parameters.Clear();
+				reqUploadRealmFile.AddFile(@"realm", realm.Config.DatabasePath);
+				var resUploadRealmFile = client.Execute(reqUploadRealmFile);
+				if (resUploadRealmFile.StatusCode != HttpStatusCode.Created) {
+					SDDebug.WriteLine($"Upload RealmFile UNsuccess. Error:{(resUploadRealmFile.Content)}");
 				}
 				end = DateTime.Now;
-				SDDebug.WriteLine($"Persons upload time (ms): {(end - start).TotalMilliseconds}");
+				SDDebug.WriteLine($"RealmFile upload time (ms): {(end - start).TotalMilliseconds}");
 
-				start = DateTime.Now;
-				IRestRequest requestDog = new RestRequest(@"Dog", Method.POST); ;
-				var qDogs = realm.All<Dog>();
-				foreach (var itemD in qDogs)
-				{
-					requestDog.Parameters.Clear();
-					requestDog.AddJsonBody(itemD);
-					var responseDog = client.Execute(requestDog);
-					if (responseDog.StatusCode != HttpStatusCode.Created ) {
-						SDDebug.WriteLine($"Insert Dog UNsuccess. Error:{(responseDog.Content)}");
-					}
-				}
-				end = DateTime.Now;
-				SDDebug.WriteLine($"Dogs upload time (ms): {(end - start).TotalMilliseconds}");
+				//start = DateTime.Now;
+				//IRestRequest requestPerson = new RestRequest(@"Person", Method.POST);
+				//var qPersons = realm.All<Person>();
+				//foreach (var itemP in qPersons)
+				//{
+				//	requestPerson.Parameters.Clear();
+				//	requestPerson.AddJsonBody(itemP);
+				//	var responsePerson = client.Execute(requestPerson);
+				//	if (responsePerson.StatusCode != HttpStatusCode.Created) {
+				//		SDDebug.WriteLine($"Insert Person UNsuccess. Error:{(responsePerson.Content)}");
+				//	}
+				//}
+				//end = DateTime.Now;
+				//SDDebug.WriteLine($"Persons upload time (ms): {(end - start).TotalMilliseconds}");
+
+				//start = DateTime.Now;
+				//IRestRequest requestDog = new RestRequest(@"Dog", Method.POST); ;
+				//var qDogs = realm.All<Dog>();
+				//foreach (var itemD in qDogs)
+				//{
+				//	requestDog.Parameters.Clear();
+				//	requestDog.AddJsonBody(itemD);
+				//	var responseDog = client.Execute(requestDog);
+				//	if (responseDog.StatusCode != HttpStatusCode.Created ) {
+				//		SDDebug.WriteLine($"Insert Dog UNsuccess. Error:{(responseDog.Content)}");
+				//	}
+				//}
+				//end = DateTime.Now;
+				//SDDebug.WriteLine($"Dogs upload time (ms): {(end - start).TotalMilliseconds}");
 				realm.Dispose();
 			};
 

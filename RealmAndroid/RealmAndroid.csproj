@@ -63,6 +63,11 @@
     <Compile Include="ThirdParty\Dadata\Suggestions\src\SuggestClientTest.cs" />
     <Compile Include="ThirdParty\Dadata\Suggestions\src\SuggestModel.cs" />
     <Compile Include="Lib\Secret.cs" />
+    <Compile Include="Entity\Pharmacy.cs" />
+    <Compile Include="Entity\Agent.cs" />
+    <Compile Include="Entity\Drug.cs" />
+    <Compile Include="Entity\Info.cs" />
+    <Compile Include="Entity\WorkType.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
